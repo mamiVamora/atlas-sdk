@@ -9,12 +9,13 @@
 **طوّر إضافات وثيمات متوافقة مع أطلس.**  
 Build plugins and themes with validated Atlas contracts.
 
+[![npm version](https://img.shields.io/npm/v/@qanati-atlas/sdk?style=for-the-badge&color=CB3837&logo=npm&logoColor=white)](https://www.npmjs.com/package/@qanati-atlas/sdk)
 [![MIT License](https://img.shields.io/badge/License-MIT-22a06b?style=for-the-badge)](LICENSE)
 ![TypeScript](https://img.shields.io/badge/Language-TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![Node.js 20+](https://img.shields.io/badge/Node.js-20%2B-43853D?style=for-the-badge&logo=nodedotjs&logoColor=white)
 ![SDK contracts](https://img.shields.io/badge/SDK-Contracts%20%26%20Validators-5B46C5?style=for-the-badge)
 
-[**🇮🇶 الدليل بالعربية**](#arabic-guide) · [**🌍 English Guide**](#english-guide) · [**💻 الشيفرة / Source**](src) · [**📄 الترخيص / License**](LICENSE)
+[**📦 npm**](https://www.npmjs.com/package/@qanati-atlas/sdk) · [**🇮🇶 الدليل بالعربية**](#arabic-guide) · [**🌍 English Guide**](#english-guide) · [**💻 الشيفرة / Source**](src) · [**📄 الترخيص / License**](LICENSE)
 
 </div>
 
@@ -28,9 +29,15 @@ Build plugins and themes with validated Atlas contracts.
 
 ### 🚀 ابدأ من هنا
 
-يتطلب تشغيل SDK محليًا **Node.js 20 أو أحدث** و **npm**.
+يتطلب تشغيل SDK **Node.js 20 أو أحدث** و **npm**.
 
-بعد الحصول على نسخة من الشيفرة المصدرية، نفّذ:
+ثبّت الحزمة الرسمية من npm:
+
+```bash
+npm install @qanati-atlas/sdk
+```
+
+أو عند العمل محليًا من الشيفرة المصدرية:
 
 ```bash
 npm install
@@ -38,16 +45,14 @@ npm run build
 npm test
 ```
 
-ستُنشأ ملفات JavaScript والتعريفات الخاصة بـTypeScript داخل `dist/`.
-
-> **التوزيع:** تثبيت حزمة `@qanati-atlas/sdk` مباشرةً من npm غير متاح حاليًا. يمكن استخدام الشيفرة الموجودة في هذا المشروع محليًا، ولا يلزم الاتصال بخوادم أطلس لتشغيل أدوات التحقق أدناه.
+> **التوزيع:** حزمة [`@qanati-atlas/sdk`](https://www.npmjs.com/package/@qanati-atlas/sdk) منشورة على npm، وتعمل أدوات التحقق فيها محليًا دون الحاجة إلى الاتصال بخوادم أطلس.
 
 ### 🧩 1. التحقق من Manifest الإضافة
 
 يحدد `Manifest` هوية الإضافة ونوعها وإصدارها والصلاحيات التي تطلبها.
 
 ```js
-const { validatePluginManifest } = require('./dist/index.js');
+const { validatePluginManifest } = require('@qanati-atlas/sdk');
 
 const manifest = {
   manifestVersion: '1.0.0',
@@ -76,7 +81,7 @@ if (!result.isValid) {
 ### 🛡️ 2. التحقق من الصلاحيات
 
 ```js
-const { PermissionSandboxValidator } = require('./dist/index.js');
+const { PermissionSandboxValidator } = require('@qanati-atlas/sdk');
 
 const result = PermissionSandboxValidator.validatePermissions([
   'READ_ACTIVITY_PROFILE',
@@ -94,7 +99,7 @@ console.log(result.rejectedPermissions); // ['DIRECT_DB_ACCESS']
 يجب أن يحافظ الثيم على الأقسام السبعة الأساسية في صفحة النشاط.
 
 ```js
-const { ThemeSectionGuard, CANONICAL_THEME_SECTIONS } = require('./dist/index.js');
+const { ThemeSectionGuard, CANONICAL_THEME_SECTIONS } = require('@qanati-atlas/sdk');
 
 const result = ThemeSectionGuard.validateThemeSections([
   ...CANONICAL_THEME_SECTIONS
@@ -129,9 +134,9 @@ console.log(result.isCompliant); // true
 | الثيمات | `ThemeSectionGuard`, `CANONICAL_THEME_SECTIONS` |
 | التوافق | `validateSdkCompatibilityRule`, `SDK_COMPATIBILITY_STATUSES` |
 
-تُستورد جميعها من نقطة الدخول `src/index.ts` أو من `dist/index.js` بعد البناء.
+تُستورد جميعها مباشرةً من `@qanati-atlas/sdk` (أو من `src/index.ts` / `dist/index.js` عند التطوير المحلي).
 
-> **حدود الحزمة:** بيئة تنفيذ Sandbox المستضافة، والتثبيت عبر npm، وعميل API عام للاتصال بخدمات أطلس ليست ضمن الوظائف المتاحة في هذه الحزمة حاليًا. يُرجى الاعتماد على الواجهات الموثقة أعلاه فقط.
+> **حدود الحزمة:** بيئة تنفيذ Sandbox المستضافة، وعميل API عام للاتصال بخدمات أطلس ليست ضمن الوظائف المتاحة في هذه الحزمة حاليًا. يُرجى الاعتماد على الواجهات الموثقة أعلاه فقط.
 
 ---
 
@@ -145,7 +150,13 @@ Build Atlas-compatible plugins and themes with the **Qanati Atlas SDK**. Use its
 
 You'll need **Node.js 20+** and **npm**.
 
-From a local copy of the SDK source, run:
+Install the official package from npm:
+
+```bash
+npm install @qanati-atlas/sdk
+```
+
+Or when working locally from the source repository:
 
 ```bash
 npm install
@@ -153,16 +164,14 @@ npm run build
 npm test
 ```
 
-Compiled JavaScript and TypeScript declarations are generated in `dist/`.
-
-> **Installation:** The `@qanati-atlas/sdk` package is not yet distributed through npm. You can use the SDK source locally; the validation utilities below do not require a connection to Atlas servers.
+> **Distribution:** [`@qanati-atlas/sdk`](https://www.npmjs.com/package/@qanati-atlas/sdk) is published on npm, and all validation utilities run locally without connecting to Atlas servers.
 
 ### 🧩 1. Validate a plugin manifest
 
 A manifest describes a plugin's identity, version, capability and requested permissions.
 
 ```js
-const { validatePluginManifest } = require('./dist/index.js');
+const { validatePluginManifest } = require('@qanati-atlas/sdk');
 
 const manifest = {
   manifestVersion: '1.0.0',
@@ -191,7 +200,7 @@ The identifiers are illustrative; this example does not represent a published At
 ### 🛡️ 2. Validate requested permissions
 
 ```js
-const { PermissionSandboxValidator } = require('./dist/index.js');
+const { PermissionSandboxValidator } = require('@qanati-atlas/sdk');
 
 const result = PermissionSandboxValidator.validatePermissions([
   'READ_ACTIVITY_PROFILE',
@@ -209,7 +218,7 @@ The validator identifies recognized and rejected permission identifiers. **Valid
 An Atlas-compatible theme must preserve the seven canonical activity-page sections.
 
 ```js
-const { ThemeSectionGuard, CANONICAL_THEME_SECTIONS } = require('./dist/index.js');
+const { ThemeSectionGuard, CANONICAL_THEME_SECTIONS } = require('@qanati-atlas/sdk');
 
 const result = ThemeSectionGuard.validateThemeSections([
   ...CANONICAL_THEME_SECTIONS
@@ -244,9 +253,9 @@ This SDK is licensed under the [MIT License](LICENSE). You may use, modify and r
 | Themes | `ThemeSectionGuard`, `CANONICAL_THEME_SECTIONS` |
 | Compatibility | `validateSdkCompatibilityRule`, `SDK_COMPATIBILITY_STATUSES` |
 
-All exports are available from `src/index.ts` or the compiled `dist/index.js`.
+All exports are available directly from `@qanati-atlas/sdk` (or from `src/index.ts` / `dist/index.js` when developing locally).
 
-> **Availability:** Hosted Sandbox execution, npm distribution, and a public Atlas API client are not yet provided by this SDK package. Use only the documented APIs above.
+> **Availability:** Hosted Sandbox execution and a public Atlas API client are not yet provided by this SDK package. Use only the documented APIs above.
 
 
 ---
