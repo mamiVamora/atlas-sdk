@@ -1,61 +1,111 @@
-# Atlas SDK | حزمة تطوير أطلس
+# Atlas SDK
 
-**العربية** | [English](#english)
+**العربية** · [English](#english)
 
-المستودع الرسمي المستقل للكود المصدري لـ **Atlas Marketplace SDK** التابع لمنصة قناتي أطلس. يُدار حاليًا عبر حساب مالك المشروع.
+طوّر إضافات وثيمات متوافقة مع **Qanati Atlas** باستخدام عقود SDK الرسمية للتحقق من بنية الإضافات، والصلاحيات المطلوبة، وأقسام واجهة النشاط، وتوافق الإصدارات.
 
-**الحالة الحالية: مستودع خاص — قيد التجهيز والاختبار، غير منشور للمطورين بعد.**
+## ابدأ من هنا
 
-هذا المستودع يحتوي **كود TypeScript حقيقيًا** مستخرجًا من عقود أطلس الحالية للتحقق من ملفات تعريف الإضافات (`Manifest`)، والصلاحيات، وحماية أقسام الثيمات، وتوافق الإصدارات. لا يتضمن حاليًا بيئة Sandbox تشغيلية أو عميلًا عامًا مكتملًا لواجهات Atlas API أو منظومة الدفع.
+يتطلب تشغيل SDK محليًا **Node.js 20 أو أحدث** و **npm**.
 
-## ما الذي تستطيع فعله بالحزمة حاليًا؟
-
-تتوفر الصادرات البرمجية الموجودة فعلًا في `src/index.ts`:
-
-| المجال | الصادرات الفعلية |
-|---|---|
-| Manifest والإصدارات | `validatePluginManifest`، `validateManifestRevision`، `isValidSemanticVersion`، `isSafePackagePath`، `canonicalizeManifest` |
-| الصلاحيات | `PermissionSandboxValidator`، `ALLOWED_PERMISSIONS`، `PROHIBITED_CAPABILITIES` |
-| الثيمات | `ThemeSectionGuard`، `CANONICAL_THEME_SECTIONS` |
-| التوافق | `validateSdkCompatibilityRule`، `SDK_COMPATIBILITY_STATUSES` |
-
-هذه الأدوات **تفحص العقود والبيانات فقط**؛ نجاح التحقق لا يمنح صلاحية تنفيذية أو إذن نشر داخل أطلس.
-
-## التشغيل والاختبار من المستودع
-
-المتطلبات: **Node.js 20 أو أحدث** وnpm. نفّذ الأوامر داخل نسخة محلية من المستودع:
+بعد الحصول على نسخة من الشيفرة المصدرية، نفّذ:
 
 ```bash
 npm install
 npm run build
 npm test
-npm run pack:check
 ```
 
-الأوامر مضافة في `package.json`، لكن اجتيازها في بيئة تطوير مستقلة **لم يُثبَت بعد**؛ التحقق مطلوب قبل الإصدار الرسمي.
+ستُنشأ ملفات JavaScript والتعريفات الخاصة بـTypeScript داخل `dist/`.
 
-مثال يستخدم صادرات الحزمة الحقيقية بعد البناء:
+> **التوزيع:** تثبيت حزمة `@qanati-atlas/sdk` مباشرةً من npm غير متاح حاليًا. يمكن استخدام الشيفرة الموجودة في هذا المشروع محليًا، ولا يلزم الاتصال بخوادم أطلس لتشغيل أدوات التحقق أدناه.
+
+## 1. التحقق من Manifest الإضافة
+
+يحدد `Manifest` هوية الإضافة ونوعها وإصدارها والصلاحيات التي تطلبها.
 
 ```js
-const { validatePluginManifest, PermissionSandboxValidator } = require('./dist/index.js');
+const { validatePluginManifest } = require('./dist/index.js');
 
-const result = PermissionSandboxValidator.validatePermissions(['READ_ACTIVITY_PROFILE']);
-console.log(result.isValid);
+const manifest = {
+  manifestVersion: '1.0.0',
+  code: 'business-hours',
+  name: 'Business Hours',
+  version: '1.0.0',
+  capabilityType: 'PLUGIN',
+  description: 'Display business opening hours',
+  author: {
+    name: 'Example Developer',
+    activityId: 'example-activity'
+  },
+  permissions: ['READ_ACTIVITY_PROFILE'],
+  entryPoint: 'dist/index.js'
+};
+
+const result = validatePluginManifest(manifest);
+
+if (!result.isValid) {
+  console.error(result.errors);
+}
 ```
 
-هذا المثال يفحص تصريحًا مطلوبًا محليًا، ولا يتصل بخادم أطلس ولا يفعّل الإضافة.
+هذا المثال يوضح فحص بنية البيانات؛ القيم التعريفية فيه أمثلة، وليست نشاطًا أو إضافة منشورة في أطلس.
 
-## سياسة الإصدار والأمان
+## 2. التحقق من الصلاحيات
 
-- الاسم المستهدف للحزمة: `@qanati-atlas/sdk`، **ولم يتم نشره على npm حتى الآن**؛ لا تستخدم `npm install @qanati-atlas/sdk` باعتباره أمرًا متاحًا.
-- الملفات المصدرية مشتقة من `packages/sdk/src` في [مستودع أطلس الأساسي](https://github.com/mamiVamora/atlas) (خاص). يجب مراجعة التوافق عند كل إصدار.
-- إصدار SDK مستقل عن إصدارات منتجات Marketplace، وتكون عملية نشر الإصدارات الرسمية يدوية وبموافقة المالك.
-- الحزمة حاليًا `private: true` وترخيصها `UNLICENSED` لمنع نشرها قبل حسم الترخيص والمراجعة الأمنية.
-- يمنع نشر أسرار أو مفاتيح أو بيانات مستخدمين أو مسارات الإدارة الداخلية أو الوصول المباشر إلى قاعدة الإنتاج.
+```js
+const { PermissionSandboxValidator } = require('./dist/index.js');
 
-**غير متاح بعد:** تثبيت npm العام، Sandbox حقيقي للمطورين، موقع وثائق منفصل، عميل API/Webhooks عام مثبت، ومصفوفة توافق عامة منشورة. لن توصف هذه الإمكانات بأنها جاهزة قبل تنفيذها واختبارها.
+const result = PermissionSandboxValidator.validatePermissions([
+  'READ_ACTIVITY_PROFILE',
+  'DIRECT_DB_ACCESS'
+]);
 
-المراجع الحاكمة في أطلس: `ATLAS_SDK_RELEASE_DISTRIBUTION_APPROVED_CONTRACT_2026-11-08.md`، `ADM-016`، `ADM-050`، `ATLAS_MASTER_JOURNEY_MAP.md`.
+console.log(result.grantedPermissions);  // ['READ_ACTIVITY_PROFILE']
+console.log(result.rejectedPermissions); // ['DIRECT_DB_ACCESS']
+```
+
+يسمح المدقق بتحديد الصلاحيات المعلنة والمرفوضة. **نتيجة التحقق لا تمنح صلاحيات فعلية على حسابات المستخدمين أو أنشطتهم.**
+
+## 3. حماية أقسام النشاط في الثيمات
+
+يجب أن يحافظ الثيم على الأقسام السبعة الأساسية في صفحة النشاط.
+
+```js
+const { ThemeSectionGuard, CANONICAL_THEME_SECTIONS } = require('./dist/index.js');
+
+const result = ThemeSectionGuard.validateThemeSections([
+  ...CANONICAL_THEME_SECTIONS
+]);
+
+console.log(result.isCompliant); // true
+```
+
+## 4. الإصدارات والتوافق
+
+يمكنك فحص تغيير تعريف إضافة بين إصدارين باستخدام `validateManifestRevision(previous, next)`، أو فحص عقد توافق SDK باستخدام `validateSdkCompatibilityRule(rule)`.
+
+تدعم قاعدة التوافق الحالات التالية:
+
+- `COMPATIBLE` — متوافق.
+- `DEPRECATED_WARN` — متوافق مع تحذير بالإيقاف التدريجي.
+- `INCOMPATIBLE` — غير متوافق.
+- `SECURITY_BLOCKED` — محظور لأسباب أمنية.
+
+هذه **أدوات تحقق محلية**؛ لا تعني أن الإضافة نُشرت أو أن تشغيلها داخل بيئة أطلس قد تم.
+
+## واجهات SDK المتاحة
+
+| المجال | الواجهات |
+|---|---|
+| تعريفات الإضافات والإصدارات | `validatePluginManifest`, `validateManifestRevision`, `isValidSemanticVersion`, `isSafePackagePath`, `canonicalizeManifest` |
+| الصلاحيات | `PermissionSandboxValidator`, `ALLOWED_PERMISSIONS`, `PROHIBITED_CAPABILITIES` |
+| الثيمات | `ThemeSectionGuard`, `CANONICAL_THEME_SECTIONS` |
+| التوافق | `validateSdkCompatibilityRule`, `SDK_COMPATIBILITY_STATUSES` |
+
+تُستورد جميعها من نقطة الدخول `src/index.ts` أو من `dist/index.js` بعد البناء.
+
+**ملاحظة:** بيئة تنفيذ Sandbox المستضافة، والتثبيت عبر npm، وعميل API عام للاتصال بخدمات أطلس ليست ضمن الوظائف المتاحة في هذه الحزمة حاليًا. يُرجى الاعتماد على الواجهات الموثقة أعلاه فقط.
 
 ---
 
@@ -63,57 +113,107 @@ console.log(result.isValid);
 
 # English
 
-Official standalone source repository for the **Qanati Atlas Marketplace SDK**, currently maintained under the product owner's GitHub account.
+Build Atlas-compatible plugins and themes with the **Qanati Atlas SDK**. Use its TypeScript contracts and validators to check plugin manifests, requested permissions, required activity-page sections, and version compatibility.
 
-**Status: PRIVATE / PRE-RELEASE — not yet distributed to developers.**
+## Getting started
 
-This repository contains **real TypeScript source code** extracted from Atlas's existing contracts for plugin manifest validation, permissions, theme-section safeguards, and version compatibility. It does **not** currently contain an operational developer Sandbox, a verified public Atlas API client, or payment functionality.
+You'll need **Node.js 20+** and **npm**.
 
-## Available SDK exports
-
-The following APIs are exported by `src/index.ts`:
-
-| Area | Available exports |
-|---|---|
-| Manifest and versioning | `validatePluginManifest`, `validateManifestRevision`, `isValidSemanticVersion`, `isSafePackagePath`, `canonicalizeManifest` |
-| Permissions | `PermissionSandboxValidator`, `ALLOWED_PERMISSIONS`, `PROHIBITED_CAPABILITIES` |
-| Themes | `ThemeSectionGuard`, `CANONICAL_THEME_SECTIONS` |
-| Compatibility | `validateSdkCompatibilityRule`, `SDK_COMPATIBILITY_STATUSES` |
-
-These utilities **validate contracts and data**. Successful validation does not grant runtime permissions, deployment authorization, or Marketplace publication.
-
-## Build and verify locally
-
-Requires **Node.js 20+** and npm. Run inside a local checkout:
+From a local copy of the SDK source, run:
 
 ```bash
 npm install
 npm run build
 npm test
-npm run pack:check
 ```
 
-The scripts are defined in `package.json`; **independent execution has not yet been verified**. Successful local build and tests are required before any release.
+Compiled JavaScript and TypeScript declarations are generated in `dist/`.
 
-Example using actual compiled exports:
+> **Installation:** The `@qanati-atlas/sdk` package is not yet distributed through npm. You can use the SDK source locally; the validation utilities below do not require a connection to Atlas servers.
+
+## 1. Validate a plugin manifest
+
+A manifest describes a plugin's identity, version, capability and requested permissions.
 
 ```js
-const { validatePluginManifest, PermissionSandboxValidator } = require('./dist/index.js');
+const { validatePluginManifest } = require('./dist/index.js');
 
-const result = PermissionSandboxValidator.validatePermissions(['READ_ACTIVITY_PROFILE']);
-console.log(result.isValid);
+const manifest = {
+  manifestVersion: '1.0.0',
+  code: 'business-hours',
+  name: 'Business Hours',
+  version: '1.0.0',
+  capabilityType: 'PLUGIN',
+  description: 'Display business opening hours',
+  author: {
+    name: 'Example Developer',
+    activityId: 'example-activity'
+  },
+  permissions: ['READ_ACTIVITY_PROFILE'],
+  entryPoint: 'dist/index.js'
+};
+
+const result = validatePluginManifest(manifest);
+
+if (!result.isValid) {
+  console.error(result.errors);
+}
 ```
 
-This only validates a requested permission locally. It does not connect to Atlas or activate an integration.
+The identifiers are illustrative; this example does not represent a published Atlas plugin or activity.
 
-## Distribution, security and licensing
+## 2. Validate requested permissions
 
-- Intended npm package: `@qanati-atlas/sdk` — **not published**. Do not advertise `npm install @qanati-atlas/sdk` as an available installation method.
-- Source originates from `packages/sdk/src` in the [main Atlas repository](https://github.com/mamiVamora/atlas) (private). Each release must be reconciled against canonical contracts and security guards.
-- Official SDK versions are independent of Marketplace item versions. Releases are manual and owner-approved.
-- `private: true` and `UNLICENSED` intentionally prevent premature distribution. Licensing and security review are prerequisites for public release.
-- Do not include secrets, customer data, internal administration endpoints, payment credentials or direct production database access.
+```js
+const { PermissionSandboxValidator } = require('./dist/index.js');
 
-**Not available yet:** public npm distribution, hosted developer Sandbox, standalone documentation website, verified public API/Webhooks client, or published compatibility matrix. These are engineering deliverables, not existing features.
+const result = PermissionSandboxValidator.validatePermissions([
+  'READ_ACTIVITY_PROFILE',
+  'DIRECT_DB_ACCESS'
+]);
 
-Canonical decisions: `ATLAS_SDK_RELEASE_DISTRIBUTION_APPROVED_CONTRACT_2026-11-08.md`, `ADM-016`, `ADM-050`, and `ATLAS_MASTER_JOURNEY_MAP.md` in the main Atlas repository.
+console.log(result.grantedPermissions);  // ['READ_ACTIVITY_PROFILE']
+console.log(result.rejectedPermissions); // ['DIRECT_DB_ACCESS']
+```
+
+The validator identifies recognized and rejected permission identifiers. **Validation does not grant access to any user data or Atlas services.**
+
+## 3. Preserve required activity sections in themes
+
+An Atlas-compatible theme must preserve the seven canonical activity-page sections.
+
+```js
+const { ThemeSectionGuard, CANONICAL_THEME_SECTIONS } = require('./dist/index.js');
+
+const result = ThemeSectionGuard.validateThemeSections([
+  ...CANONICAL_THEME_SECTIONS
+]);
+
+console.log(result.isCompliant); // true
+```
+
+## 4. Versions and compatibility
+
+Use `validateManifestRevision(previous, next)` to validate a manifest update, and `validateSdkCompatibilityRule(rule)` to inspect an SDK compatibility rule.
+
+Supported compatibility statuses:
+
+- `COMPATIBLE` — compatible.
+- `DEPRECATED_WARN` — compatible with a deprecation warning.
+- `INCOMPATIBLE` — incompatible.
+- `SECURITY_BLOCKED` — blocked for security reasons.
+
+These are **local validators**, not proof that a plugin has been published, installed or executed by Atlas.
+
+## Available SDK APIs
+
+| Area | Exports |
+|---|---|
+| Manifests and versioning | `validatePluginManifest`, `validateManifestRevision`, `isValidSemanticVersion`, `isSafePackagePath`, `canonicalizeManifest` |
+| Permissions | `PermissionSandboxValidator`, `ALLOWED_PERMISSIONS`, `PROHIBITED_CAPABILITIES` |
+| Themes | `ThemeSectionGuard`, `CANONICAL_THEME_SECTIONS` |
+| Compatibility | `validateSdkCompatibilityRule`, `SDK_COMPATIBILITY_STATUSES` |
+
+All exports are available from `src/index.ts` or the compiled `dist/index.js`.
+
+**Availability:** Hosted Sandbox execution, npm distribution, and a public Atlas API client are not yet provided by this SDK package. Use only the documented APIs above.
