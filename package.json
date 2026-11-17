@@ -20,5 +20,10 @@
     "typescript": "^5.8.3"
   },
   "author": "Qanati Atlas Team",
-  "license": "UNLICENSED"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mamiVamora/atlas-sdk.git"
+  },
+  "homepage": "https://github.com/mamiVamora/atlas-sdk#readme"
 }
