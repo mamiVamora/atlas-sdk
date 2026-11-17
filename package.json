@@ -1,0 +1,24 @@
+{
+  "name": "@qanati-atlas/sdk",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Atlas Marketplace SDK manifest, permissions, theme, and compatibility contracts (pre-release)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test tests/*.test.cjs",
+    "pack:check": "npm pack --dry-run"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  },
+  "author": "Qanati Atlas Team",
+  "license": "UNLICENSED"
+}
