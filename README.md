@@ -94,6 +94,10 @@ console.log(result.isCompliant); // true
 
 هذه **أدوات تحقق محلية**؛ لا تعني أن الإضافة نُشرت أو أن تشغيلها داخل بيئة أطلس قد تم.
 
+## الترخيص
+
+الحزمة متاحة بموجب [ترخيص MIT](LICENSE). يمكنك استخدامها وتعديلها وتوزيعها في مشاريع تجارية، بشرط الاحتفاظ بإشعار الحقوق والترخيص. ينطبق الترخيص على ملفات هذا المستودع، ولا يمنح حق الوصول إلى خوادم أطلس أو بيانات المستخدمين أو صلاحيات Marketplace، ولا يشمل شيفرة منصة أطلس الخاصة.
+
 ## واجهات SDK المتاحة
 
 | المجال | الواجهات |
@@ -204,6 +208,10 @@ Supported compatibility statuses:
 - `SECURITY_BLOCKED` — blocked for security reasons.
 
 These are **local validators**, not proof that a plugin has been published, installed or executed by Atlas.
+
+## License
+
+This SDK is licensed under the [MIT License](LICENSE). You may use, modify and redistribute it in commercial projects provided you retain the copyright and license notice. The license applies to this repository's code; it does not grant access to Atlas servers, customer data, Marketplace permissions, or the private Atlas platform source.
 
 ## Available SDK APIs
 
