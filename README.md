@@ -1,6 +1,8 @@
 <div align="center">
 
-# 🌐 Atlas SDK
+<img src="assets/atlas-logo-horizontal.png" alt="Qanati Atlas Logo" width="280" />
+
+# Atlas SDK
 
 ### أدوات المطورين لمنظومة قناتي أطلس · Developer Toolkit for Qanati Atlas
 
